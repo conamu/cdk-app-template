@@ -2,6 +2,9 @@ package main
 
 import (
 	"github.com/aws/aws-cdk-go/awscdk/v2"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awsapigateway"
+	"payment-and-order-provider-template/infrastructure"
+
 	// "github.com/aws/aws-cdk-go/awscdk/v2/awssqs"
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
@@ -33,11 +36,24 @@ func main() {
 
 	app := awscdk.NewApp(nil)
 
-	NewPaymentAndOrderProviderTemplateStack(app, "PaymentAndOrderProviderTemplateStack", &PaymentAndOrderProviderTemplateStackProps{
+	stack := NewPaymentAndOrderProviderTemplateStack(app, "PaymentAndOrderProviderTemplateStack", &PaymentAndOrderProviderTemplateStackProps{
 		awscdk.StackProps{
 			Env: env(),
 		},
 	})
+
+	ApiGatewayRoot := infrastructure.GetApiGateway(stack,
+		"transactions-api",
+		"Transaction API",
+		"Api for transactions and orders")
+
+	PingLambda := infrastructure.GetPingLambda(stack, "ping-lambda")
+
+	PingIntegration := awsapigateway.NewLambdaIntegration(PingLambda, &awsapigateway.LambdaIntegrationOptions{})
+
+	ApiGatewayRoot.Root().
+		AddResource(jsii.String("ping"), &awsapigateway.ResourceOptions{}).
+		AddMethod(jsii.String("GET"), PingIntegration, &awsapigateway.MethodOptions{})
 
 	app.Synth(nil)
 }
