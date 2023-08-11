@@ -1,0 +1,3 @@
+cdklocal synth
+cdklocal bootstrap
+cdklocal deploy
