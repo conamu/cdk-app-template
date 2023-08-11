@@ -1,3 +1,9 @@
+prepare-environment:
+  stage: prepare
+  script:
+    - apt install make
+    - make -v
+
 build-job:
   stage: build
   script:
