@@ -31,6 +31,14 @@ unit-test:
 acceptance-test:
   image: docker:24.0.5
   stage: build-test-deploy
+  variables:
+    AWS_ACCESS_KEY_ID: test
+    AWS_SECRET_ACCESS_KEY: test
+    AWS_DEFAULT_REGION: eu-west-1
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+    LOCALSTACK_HOSTNAME: localhost.localstack.cloud
+    HOSTNAME_EXTERNAL: localhost.localstack.cloud
   needs:
     - build
   services:
@@ -42,9 +50,8 @@ acceptance-test:
     - apk add --update gcc musl-dev linux-headers py3-pip python3 python3-dev npm
     - npm install -g aws-cdk-local aws-cdk
   script:
-    - sleep 20
+    - sleep 30
     - docker pull localstack/localstack:latest
-    - export DOCKER_HOST=tcp://127.0.0.1:2375
     - docker-compose -f localstack.compose up -d
     - ./scripts/localstack-deploy.sh
 
