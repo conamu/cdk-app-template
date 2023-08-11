@@ -1,7 +1,6 @@
 image: alpine:latest
 
 stages:
-  - setup
   - build
   - test
   - synthesis
@@ -9,15 +8,10 @@ stages:
   - acceptance-test
   - deploy
 
-setup-runner:
-  stage: setup
-  script:
-    - echo "setup"
-
 build-job:
   stage: build
   script:
-    - echo "build"
+    - ./scripts/build.sh
   artifacts:
     expire_in: 1 week
     paths:

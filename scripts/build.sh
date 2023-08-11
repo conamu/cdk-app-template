@@ -1,0 +1,1 @@
+cd internal/app/ping && GOOS=linux GOARCH=$(arch) go build -o bootstrap . && zip bootstrap.zip bootstrap
