@@ -35,6 +35,8 @@ test-job2:
 
 synthesize-cloudformation:
   stage: synthesis
+  script:
+    - echo "Synthesize Cloud Formation template"
 
 deploy-prod:
   stage: deploy
