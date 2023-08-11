@@ -43,9 +43,7 @@ acceptance-test:
     - npm install -g aws-cdk-local aws-cdk
   script:
     - docker pull localstack/localstack:latest
-    - dind_ip="$(getent hosts docker | cut -d' ' -f1)"
-    - export DOCKER_HOST="tcp://${dind_ip}:2375"
-    - echo "${dind_ip} localhost.localstack.cloud " >> /etc/hosts
+    - export DOCKER_HOST=tcp://127.0.0.1:2375
     - docker-compose -f localstack.compose up -d
     - ./scripts/localstack-deploy.sh
 
