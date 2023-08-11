@@ -11,9 +11,10 @@ stages:
 build-job:
   image: golang:latest
   stage: build
-  script:
+  before_script:
     - apt update
     - apt install zip -y
+  script:
     - ./scripts/build.sh
   artifacts:
     expire_in: 1 week
@@ -24,6 +25,12 @@ test-job1:
   stage: test
   script:
     - echo "This job tests something"
+    - go install gotest.tools/gotestsum@latest
+    - gotestsum --junitfile report.xml --format testname
+  artifacts:
+    when: always
+    reports:
+      junit: report.xml
 
 test-job2:
   stage: test
@@ -37,6 +44,12 @@ synthesize-cloudformation:
   stage: synthesis
   script:
     - echo "Synthesize Cloud Formation template"
+
+deploy-localstack:
+  services:
+    - name: docker:20.10.16-dind
+      alias: docker
+      command: ["--tls=false"]
 
 deploy-staging:
   stage: deploy
