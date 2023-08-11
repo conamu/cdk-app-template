@@ -2,7 +2,7 @@ arch := arm64
 
 local-deploy:
 	- rm -rd cdk.out
-	- cd internal/app/ping && GOOS=linux GOARCH=$(arch) go build -o bootstrap . && zip bootstrap.zip bootstrap
+	- make build
 	- ./scripts/localstack-deploy.sh
 
 localstack-up:

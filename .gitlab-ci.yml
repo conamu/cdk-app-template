@@ -47,7 +47,7 @@ acceptance-test:
       command: ["--tls=false"]
   before_script:
     - apk update
-    - apk add --update gcc musl-dev linux-headers py3-pip python3 python3-dev npm
+    - apk add --update gcc musl-dev linux-headers py3-pip python3 python3-dev npm go
     - npm install -g aws-cdk-local aws-cdk
   script:
     - sleep 30
