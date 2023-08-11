@@ -29,12 +29,12 @@ unit-test:
       junit: report.xml
 
 acceptance-test:
-  image: docker:20.10.16
+  image: docker:24.0.5
   stage: build-test-deploy
   needs:
     - build
   services:
-    - name: docker:20.10.16-dind
+    - name: docker:24.0.5-dind
       alias: docker
       command: ["--tls=false"]
   before_script:
