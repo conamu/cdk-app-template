@@ -12,3 +12,6 @@ localstack-up:
 
 localstack-down:
 	- docker-compose -f localstack.compose down
+
+ci-build:
+	- cd internal/app/ping && GOOS=linux GOARCH=$(arch) go build -o bootstrap . && zip bootstrap.zip bootstrap
