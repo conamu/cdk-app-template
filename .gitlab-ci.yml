@@ -3,7 +3,6 @@ image: alpine:latest
 
 build:
   image: golang:latest
-  stage: build
   before_script:
     - apt update
     - apt install zip -y
@@ -16,7 +15,6 @@ build:
 
 unit-test:
   image: golang:latest
-  stage: test
   before_script:
     - go install gotest.tools/gotestsum@latest
   script:
@@ -27,7 +25,6 @@ unit-test:
       junit: report.xml
 
 acceptance-test:
-  stage: acceptance-test
   needs:
     - build
   services:
@@ -50,7 +47,6 @@ acceptance-test:
 
 
 deploy-staging:
-  stage: deploy
   needs:
     - unit-test
     - acceptance-test
@@ -58,7 +54,6 @@ deploy-staging:
     - echo "Deployment to staging"
 
 deploy-prod:
-  stage: deploy
   needs:
     - unit-test
     - acceptance-test
