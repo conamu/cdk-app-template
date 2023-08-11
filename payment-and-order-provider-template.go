@@ -49,6 +49,8 @@ func main() {
 
 	PingLambda := infrastructure.GetPingLambda(stack, "ping-lambda")
 
+	infrastructure.GetDynamoDb(stack, "customer-table")
+
 	PingIntegration := awsapigateway.NewLambdaIntegration(PingLambda, &awsapigateway.LambdaIntegrationOptions{})
 
 	ApiGatewayRoot.Root().

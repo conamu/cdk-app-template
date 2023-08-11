@@ -17,7 +17,6 @@ services:
       - LS_LOG=info
       - EDGE_BIND_HOST=0.0.0.0
       - LAMBDA_RUNTIME_ENVIRONMENT_TIMEOUT=15
-      - PROVIDER_OVERRIDE_LAMBDA=legacy
     volumes:
       - "~/.localstack-data:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"

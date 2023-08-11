@@ -5,7 +5,7 @@ local-deploy:
 	- cd internal/app/ping && GOOS=linux GOARCH=$(arch) go build -o bootstrap . && zip bootstrap.zip bootstrap
 	- cdklocal synth
 	- cdklocal bootstrap
-	- cdklocal deploy
+	- cdklocal deploy --all
 
 localstack-up:
 	- docker-compose -f localstack.compose up -d
