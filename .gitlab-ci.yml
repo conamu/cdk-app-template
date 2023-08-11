@@ -12,13 +12,12 @@ stages:
 setup-runner:
   stage: setup
   script:
-    - apt install make
-    - make -v
+    - echo "setup"
 
 build-job:
   stage: build
   script:
-    - make ci-build
+    - echo "build"
   artifacts:
     expire_in: 1 week
     paths:
@@ -42,8 +41,16 @@ synthesize-cloudformation:
   script:
     - echo "Synthesize Cloud Formation template"
 
+deploy-staging:
+  stage: deploy
+  script:
+    - echo "Deployment to staging"
+
 deploy-prod:
   stage: deploy
   script:
     - echo "This job deploys something from the $CI_COMMIT_BRANCH branch."
   environment: production
+  allow_failure: false
+  rules:
+    - when: manual
