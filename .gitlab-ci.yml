@@ -32,8 +32,11 @@ acceptance-test:
   image: docker:24.0.5
   stage: build-test-deploy
   variables:
+    AWS_ACCESS_KEY_ID: test
+    AWS_SECRET_ACCESS_KEY: test
     CDK_DEPLOY_ACCOUNT: 000000000000
     CDK_DEPLOY_REGION: eu-west-1
+    AWS_DEFAULT_REGION: eu-west-1
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
     LOCALSTACK_HOSTNAME: localhost.localstack.cloud
