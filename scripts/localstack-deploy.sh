@@ -1,3 +1,3 @@
 cdklocal synth
 cdklocal bootstrap
-cdklocal deploy
+cdklocal deploy --require-approval never
