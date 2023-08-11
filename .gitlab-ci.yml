@@ -1,5 +1,5 @@
 prepare-environment:
-  stage: prepare
+  stage: .pre
   script:
     - apt install make
     - make -v
