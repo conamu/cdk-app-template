@@ -12,6 +12,7 @@ build-job:
   image: golang:latest
   stage: build
   script:
+    - apt install zip -y
     - ./scripts/build.sh
   artifacts:
     expire_in: 1 week
