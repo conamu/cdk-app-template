@@ -12,6 +12,7 @@ build-job:
   image: golang:latest
   stage: build
   script:
+    - apt update
     - apt install zip -y
     - ./scripts/build.sh
   artifacts:
