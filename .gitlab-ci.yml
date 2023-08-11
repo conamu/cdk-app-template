@@ -1,13 +1,7 @@
 image: alpine:latest
 
-stages:
-  - build
-  - test
-  - synthesis
-  - acceptance-test
-  - deploy
 
-build-job:
+build:
   image: golang:latest
   stage: build
   before_script:
@@ -20,25 +14,22 @@ build-job:
     paths:
       - internal/app/*/*.zip
 
-test-job1:
+unit-test:
   image: golang:latest
   stage: test
-  script:
-    - echo "This job tests something"
+  before_script:
     - go install gotest.tools/gotestsum@latest
+  script:
     - gotestsum --junitfile report.xml --format testname
   artifacts:
     when: always
     reports:
       junit: report.xml
 
-synthesize-cloudformation:
-  stage: synthesis
-  script:
-    - echo "Synthesize Cloud Formation template"
-
-test-localstack:
+acceptance-test:
   stage: acceptance-test
+  needs:
+    - build
   services:
     - name: docker:20.10.16-dind
       alias: docker
@@ -60,11 +51,18 @@ test-localstack:
 
 deploy-staging:
   stage: deploy
+  needs:
+    - unit-test
+    - acceptance-test
   script:
     - echo "Deployment to staging"
 
 deploy-prod:
   stage: deploy
+  needs:
+    - unit-test
+    - acceptance-test
+    - deploy-staging
   script:
     - echo "This job deploys something from the $CI_COMMIT_BRANCH branch."
   environment: production
