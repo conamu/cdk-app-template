@@ -9,6 +9,7 @@ stages:
   - deploy
 
 build-job:
+  image: golang:latest
   stage: build
   script:
     - ./scripts/build.sh
