@@ -1,3 +1,3 @@
 cdklocal synth
-cdklocal bootstrap
+cdklocal bootstrap -v
 cdklocal deploy --require-approval never --profile default
