@@ -54,6 +54,8 @@ acceptance-test:
     - python3 -m pip install localstack awscli
   script:
     - sleep 30
+    - dind_ip="$(getent hosts docker | cut -d' ' -f1)"
+    - echo "${dind_ip} localhost.localstack.cloud " >> /etc/hosts
     - docker pull localstack/localstack:latest
     - docker-compose -f localstack.compose up -d
     - aws configure set aws_access_key_id "test" && aws configure set aws_secret_access_key "test" && aws configure set region "eu-west-1" && aws configure set output "json"
