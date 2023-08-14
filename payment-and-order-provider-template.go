@@ -51,6 +51,8 @@ func main() {
 
 	infrastructure.GetDynamoDb(stack, "customer-table")
 
+	awscdk.Tags_Of(ApiGatewayRoot).Add(str("_custom_id_"), str("gofq6f9983"), &awscdk.TagProps{})
+
 	PingIntegration := awsapigateway.NewLambdaIntegration(PingLambda, &awsapigateway.LambdaIntegrationOptions{})
 
 	ApiGatewayRoot.Root().
@@ -84,4 +86,8 @@ func env() *awscdk.Environment {
 	//  Account: jsii.String(os.Getenv("CDK_DEFAULT_ACCOUNT")),
 	//  Region:  jsii.String(os.Getenv("CDK_DEFAULT_REGION")),
 	// }
+}
+
+func str(s string) *string {
+	return jsii.String(s)
 }
