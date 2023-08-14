@@ -1,3 +1,3 @@
 cdklocal synth
-cdklocal bootstrap -v
-cdklocal deploy --require-approval never --profile default
+cdklocal bootstrap
+cdklocal deploy --require-approval never --profile default --tags '{"_custom_id_":"test123"}'
