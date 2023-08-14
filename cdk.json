@@ -1,5 +1,5 @@
 {
-  "app": "go mod download && go run payment-and-order-provider-template.go",
+  "app": "go mod download && go run stack.go",
   "watch": {
     "include": [
       "**"

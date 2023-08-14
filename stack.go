@@ -47,11 +47,12 @@ func main() {
 		"Transaction API",
 		"Api for transactions and orders")
 
+	// Set api gateway id for easier testing
+	awscdk.Tags_Of(ApiGatewayRoot).Add(str("_custom_id_"), str("gofq6f9983"), &awscdk.TagProps{})
+
 	PingLambda := infrastructure.GetPingLambda(stack, "ping-lambda")
 
 	infrastructure.GetDynamoDb(stack, "customer-table")
-
-	awscdk.Tags_Of(ApiGatewayRoot).Add(str("_custom_id_"), str("gofq6f9983"), &awscdk.TagProps{})
 
 	PingIntegration := awsapigateway.NewLambdaIntegration(PingLambda, &awsapigateway.LambdaIntegrationOptions{})
 

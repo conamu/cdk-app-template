@@ -9,7 +9,7 @@ package main
 // )
 
 // example tests. To run these tests, uncomment this file along with the
-// example resource in payment-and-order-provider-template_test.go
+// example resource in stack_test.go
 // func TestPaymentAndOrderProviderTemplateStack(t *testing.T) {
 // 	// GIVEN
 // 	app := awscdk.NewApp(nil)
