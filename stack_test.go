@@ -15,7 +15,7 @@ package main
 // 	app := awscdk.NewApp(nil)
 
 // 	// WHEN
-// 	stack := NewPaymentAndOrderProviderTemplateStack(app, "MyStack", nil)
+// 	stack := NewStack(app, "MyStack", nil)
 
 // 	// THEN
 // 	template := assertions.Template_FromStack(stack)

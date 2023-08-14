@@ -1,32 +1,25 @@
 package main
 
 import (
+	"cdk-app-template/infrastructure"
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsapigateway"
-	"payment-and-order-provider-template/infrastructure"
 
 	// "github.com/aws/aws-cdk-go/awscdk/v2/awssqs"
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
 )
 
-type PaymentAndOrderProviderTemplateStackProps struct {
+type StackProps struct {
 	awscdk.StackProps
 }
 
-func NewPaymentAndOrderProviderTemplateStack(scope constructs.Construct, id string, props *PaymentAndOrderProviderTemplateStackProps) awscdk.Stack {
+func NewStack(scope constructs.Construct, id string, props *StackProps) awscdk.Stack {
 	var sprops awscdk.StackProps
 	if props != nil {
 		sprops = props.StackProps
 	}
 	stack := awscdk.NewStack(scope, &id, &sprops)
-
-	// The code that defines your stack goes here
-
-	// example resource
-	// queue := awssqs.NewQueue(stack, jsii.String("PaymentAndOrderProviderTemplateQueue"), &awssqs.QueueProps{
-	// 	VisibilityTimeout: awscdk.Duration_Seconds(jsii.Number(300)),
-	// })
 
 	return stack
 }
@@ -36,7 +29,7 @@ func main() {
 
 	app := awscdk.NewApp(nil)
 
-	stack := NewPaymentAndOrderProviderTemplateStack(app, "PaymentAndOrderProviderTemplateStack", &PaymentAndOrderProviderTemplateStackProps{
+	stack := NewStack(app, "CdkAppStack", &StackProps{
 		awscdk.StackProps{
 			Env: env(),
 		},
