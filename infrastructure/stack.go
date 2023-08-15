@@ -1,7 +1,6 @@
-package main
+package infrastructure
 
 import (
-	"cdk-app-template/infrastructure"
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsapigateway"
 
@@ -10,11 +9,11 @@ import (
 	"github.com/aws/jsii-runtime-go"
 )
 
-type StackProps struct {
+type stackProps struct {
 	awscdk.StackProps
 }
 
-func NewStack(scope constructs.Construct, id string, props *StackProps) awscdk.Stack {
+func newStack(scope constructs.Construct, id string, props *stackProps) awscdk.Stack {
 	var sprops awscdk.StackProps
 	if props != nil {
 		sprops = props.StackProps
@@ -24,34 +23,34 @@ func NewStack(scope constructs.Construct, id string, props *StackProps) awscdk.S
 	return stack
 }
 
-func main() {
+func BuildStack() {
 	defer jsii.Close()
 
 	app := awscdk.NewApp(nil)
 
-	stack := NewStack(app, "CdkAppStack", &StackProps{
+	stack := newStack(app, "CdkAppStack", &stackProps{
 		awscdk.StackProps{
 			Env: env(),
 		},
 	})
 
-	ApiGatewayRoot := infrastructure.GetApiGateway(stack,
+	ApiGatewayRoot := GetApiGateway(stack,
 		"transactions-api",
 		"Transaction API",
 		"Api for transactions and orders")
 
 	// Set api gateway id for easier testing
-	awscdk.Tags_Of(ApiGatewayRoot).Add(str("_custom_id_"), str("gofq6f9983"), &awscdk.TagProps{})
+	awscdk.Tags_Of(ApiGatewayRoot).Add(s("_custom_id_"), s("gofq6f9983"), &awscdk.TagProps{})
 
-	PingLambda := infrastructure.GetPingLambda(stack, "ping-lambda")
+	PingLambda := GetPingLambda(stack, "ping-lambda")
 
-	infrastructure.GetDynamoDb(stack, "customer-table")
+	GetDynamoDb(stack, "customer-table")
 
 	PingIntegration := awsapigateway.NewLambdaIntegration(PingLambda, &awsapigateway.LambdaIntegrationOptions{})
 
 	ApiGatewayRoot.Root().
-		AddResource(jsii.String("ping"), &awsapigateway.ResourceOptions{}).
-		AddMethod(jsii.String("GET"), PingIntegration, &awsapigateway.MethodOptions{})
+		AddResource(s("ping"), &awsapigateway.ResourceOptions{}).
+		AddMethod(s("GET"), PingIntegration, &awsapigateway.MethodOptions{})
 
 	app.Synth(nil)
 }
@@ -68,8 +67,8 @@ func env() *awscdk.Environment {
 	// the stack to. This is the recommendation for production stacks.
 	//---------------------------------------------------------------------------
 	return &awscdk.Environment{
-		Account: jsii.String("000000000000"),
-		Region:  jsii.String("eu-west-1"),
+		Account: s("000000000000"),
+		Region:  s("eu-west-1"),
 	}
 
 	// Uncomment to specialize this stack for the AWS Account and Region that are
@@ -82,6 +81,6 @@ func env() *awscdk.Environment {
 	// }
 }
 
-func str(s string) *string {
+func s(s string) *string {
 	return jsii.String(s)
 }
