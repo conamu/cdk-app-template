@@ -3,6 +3,8 @@ package infrastructure
 import (
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsapigateway"
+	"github.com/spf13/viper"
+
 	// "github.com/aws/aws-cdk-go/awscdk/v2/awssqs"
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
@@ -66,8 +68,8 @@ func env() *awscdk.Environment {
 	// the stack to. This is the recommendation for production stacks.
 	//---------------------------------------------------------------------------
 	return &awscdk.Environment{
-		Account: s("000000000000"),
-		Region:  s("eu-west-1"),
+		Account: s(viper.GetString("aws-account")),
+		Region:  s(viper.GetString("aws-region")),
 	}
 
 	// Uncomment to specialize this stack for the AWS Account and Region that are
