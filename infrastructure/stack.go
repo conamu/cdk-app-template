@@ -4,6 +4,7 @@ import (
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsapigateway"
 	"github.com/spf13/viper"
+	"os"
 
 	// "github.com/aws/aws-cdk-go/awscdk/v2/awssqs"
 	"github.com/aws/constructs-go/constructs/v10"
@@ -67,6 +68,14 @@ func env() *awscdk.Environment {
 	// Uncomment if you know exactly what account and region you want to deploy
 	// the stack to. This is the recommendation for production stacks.
 	//---------------------------------------------------------------------------
+	env := os.Getenv("ENV")
+	if env == "local" {
+		return &awscdk.Environment{
+			Account: s("000000000000"),
+			Region:  s("eu-west-1"),
+		}
+	}
+
 	return &awscdk.Environment{
 		Account: s(viper.GetString("aws-account")),
 		Region:  s(viper.GetString("aws-region")),
