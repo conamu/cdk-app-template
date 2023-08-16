@@ -68,6 +68,7 @@ deploy-staging:
   needs:
     - unit-test
     - acceptance-test
+    - build
   dependencies:
     - build
   before_script:
