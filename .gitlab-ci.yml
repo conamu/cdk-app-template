@@ -32,6 +32,7 @@ acceptance-test:
   image: docker:24.0.5
   stage: build-test-deploy
   variables:
+    ENV: local
     AWS_ACCESS_KEY_ID: test
     AWS_SECRET_ACCESS_KEY: test
     CDK_DEPLOY_ACCOUNT: 000000000000
@@ -65,6 +66,8 @@ acceptance-test:
 
 deploy-staging:
   stage: build-test-deploy
+  variables:
+    ENV: staging
   needs:
     - unit-test
     - acceptance-test
