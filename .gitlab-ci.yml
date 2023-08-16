@@ -74,7 +74,7 @@ deploy-staging:
     - npm install -g aws-cdk-local aws-cdk
     - python3 -m pip install localstack awscli
   script:
-    - make deploy-staging
+    - ./scripts/deploy.sh
 
 deploy-prod:
   stage: build-test-deploy
