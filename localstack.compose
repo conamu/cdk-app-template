@@ -12,11 +12,10 @@ services:
       - "443:443"              # LocalStack HTTPS Gateway
     environment:
       - DEBUG=1
-      - LAMBDA_EXECUTOR=docker
       - DOCKER_HOST=unix:///var/run/docker.sock
       - LS_LOG=info
-      - EDGE_BIND_HOST=0.0.0.0
-      - LAMBDA_RUNTIME_ENVIRONMENT_TIMEOUT=15
+      - GATEWAY_LISTEN=0.0.0.0
+      - LAMBDA_RUNTIME_ENVIRONMENT_TIMEOUT=3
     volumes:
-      - "~/.localstack-data:/var/lib/localstack"
-      - "/var/run/docker.sock:/var/run/docker.sock"
+      - ~/.localstack-data:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
