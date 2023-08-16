@@ -68,6 +68,8 @@ deploy-staging:
   needs:
     - unit-test
     - acceptance-test
+  dependencies:
+    - build
   before_script:
     - apk update
     - apk add --update gcc musl-dev linux-headers py3-pip python3 python3-dev npm go
