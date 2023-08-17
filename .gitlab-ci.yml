@@ -19,6 +19,8 @@ build:
 build-prod:
   image: golang:latest
   stage: build-test-deploy
+  variables:
+    ENV: production
   needs:
     - unit-test
     - acceptance-test
