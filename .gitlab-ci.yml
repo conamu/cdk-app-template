@@ -16,6 +16,19 @@ build:
     paths:
       - internal/app/*/*.zip
 
+build-prod:
+  image: golang:latest
+  stage: build-test-deploy
+  before_script:
+    - apt update
+    - apt install zip -y
+  script:
+    - ./scripts/build.sh
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - internal/app/*/*.zip
+
 unit-test:
   image: golang:latest
   stage: build-test-deploy
@@ -84,13 +97,22 @@ deploy-staging:
 
 deploy-prod:
   stage: build-test-deploy
+  variables:
+    ENV: production
   needs:
+    - build-prod
     - unit-test
     - acceptance-test
     - deploy-staging
+  dependencies:
+    - build-prod
+  before_script:
+    - apk update
+    - apk add --update gcc musl-dev linux-headers py3-pip python3 python3-dev npm go
+    - npm install -g aws-cdk-local aws-cdk
+    - python3 -m pip install localstack awscli
   script:
-    - echo "This job deploys something from the $CI_COMMIT_BRANCH branch."
-  environment: production
+    - ./scripts/deploy.sh
   allow_failure: false
   rules:
     - when: manual
