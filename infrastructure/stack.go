@@ -3,6 +3,7 @@ package infrastructure
 import (
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsapigateway"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
 	"github.com/spf13/viper"
 	"os"
 
@@ -45,6 +46,10 @@ func BuildStack() {
 	awscdk.Tags_Of(ApiGatewayRoot).Add(s("_custom_id_"), s("gofq6f9983"), &awscdk.TagProps{})
 
 	PingLambda := GetPingLambda(stack, "ping-lambda")
+
+	awslambda.NewVersion(stack, s("staging"), &awslambda.VersionProps{
+		Lambda: PingLambda,
+	})
 
 	GetDynamoDb(stack, "customer-table")
 
