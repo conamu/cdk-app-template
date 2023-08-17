@@ -19,6 +19,9 @@ build:
 build-prod:
   image: golang:latest
   stage: build-test-deploy
+  needs:
+    - unit-test
+    - acceptance-test
   before_script:
     - apt update
     - apt install zip -y
