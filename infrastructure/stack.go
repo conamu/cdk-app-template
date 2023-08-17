@@ -3,7 +3,6 @@ package infrastructure
 import (
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsapigateway"
-	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
 	"github.com/spf13/viper"
 	"os"
 
@@ -15,6 +14,8 @@ import (
 type stackProps struct {
 	awscdk.StackProps
 }
+
+var stage string
 
 func newStack(scope constructs.Construct, id string, props *stackProps) awscdk.Stack {
 	var sprops awscdk.StackProps
@@ -30,10 +31,12 @@ func BuildStack() {
 	defer jsii.Close()
 
 	app := awscdk.NewApp(nil)
+	stage = os.Getenv("ENV")
 
 	stack := newStack(app, "CdkAppStack", &stackProps{
 		awscdk.StackProps{
-			Env: env(),
+			StackName: s("Cdk-App-Template"),
+			Env:       env(),
 		},
 	})
 
@@ -47,13 +50,9 @@ func BuildStack() {
 
 	PingLambda := GetPingLambda(stack, "ping-lambda")
 
-	awslambda.NewVersion(stack, s("staging"), &awslambda.VersionProps{
-		Lambda: PingLambda,
-	})
+	lambdaAlias := GetFunctionVersion(PingLambda, stack, stage)
 
-	GetDynamoDb(stack, "customer-table")
-
-	PingIntegration := awsapigateway.NewLambdaIntegration(PingLambda, &awsapigateway.LambdaIntegrationOptions{})
+	PingIntegration := awsapigateway.NewLambdaIntegration(lambdaAlias, &awsapigateway.LambdaIntegrationOptions{})
 
 	ApiGatewayRoot.Root().
 		AddResource(s("ping"), &awsapigateway.ResourceOptions{}).
@@ -73,8 +72,7 @@ func env() *awscdk.Environment {
 	// Uncomment if you know exactly what account and region you want to deploy
 	// the stack to. This is the recommendation for production stacks.
 	//---------------------------------------------------------------------------
-	env := os.Getenv("ENV")
-	if env == "local" {
+	if stage == "local" {
 		return &awscdk.Environment{
 			Account: s("000000000000"),
 			Region:  s("eu-west-1"),

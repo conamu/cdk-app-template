@@ -15,3 +15,6 @@ localstack-down:
 
 build:
 	- ./scripts/build.sh
+
+bootstrap:
+	- cdk bootstrap

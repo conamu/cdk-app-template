@@ -8,6 +8,7 @@ import (
 
 func GetPingLambda(stack constructs.Construct, id string) awslambda.Function {
 	function := awslambda.NewFunction(stack, jsii.String(id), &awslambda.FunctionProps{
+		FunctionName: s("Ping"),
 		Code:         awslambda.AssetCode_FromAsset(jsii.String("internal/app/ping/bootstrap.zip"), nil),
 		Handler:      jsii.String("bootstrap.zip"),
 		Runtime:      awslambda.Runtime_PROVIDED_AL2(),
@@ -15,4 +16,17 @@ func GetPingLambda(stack constructs.Construct, id string) awslambda.Function {
 	})
 
 	return function
+}
+
+func GetFunctionVersion(function awslambda.IFunction, stack constructs.Construct, env string) awslambda.Alias {
+	lambdaVersion := awslambda.NewVersion(stack, s(env), &awslambda.VersionProps{
+		Lambda: function,
+	})
+
+	lambdaAlias := awslambda.NewAlias(stack, s(env), &awslambda.AliasProps{
+		AliasName: s("staging"),
+		Version:   lambdaVersion,
+	})
+
+	return lambdaAlias
 }
