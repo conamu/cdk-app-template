@@ -24,7 +24,7 @@ func GetFunctionVersion(function awslambda.IFunction, stack constructs.Construct
 	})
 
 	lambdaAlias := awslambda.NewAlias(stack, s(env+"-alias"), &awslambda.AliasProps{
-		AliasName: s("staging"),
+		AliasName: s(env),
 		Version:   lambdaVersion,
 	})
 
