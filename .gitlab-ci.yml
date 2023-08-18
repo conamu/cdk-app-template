@@ -6,6 +6,9 @@ stages:
 build:
   image: golang:latest
   stage: build-test-deploy
+  only:
+    - master
+    - merge_requests
   before_script:
     - apt update
     - apt install zip -y
@@ -39,6 +42,9 @@ build-prod:
 unit-test:
   image: golang:latest
   stage: build-test-deploy
+  only:
+    - master
+    - merge_requests
   before_script:
     - go install gotest.tools/gotestsum@latest
   script:
@@ -51,6 +57,9 @@ unit-test:
 acceptance-test:
   image: docker:24.0.5
   stage: build-test-deploy
+  only:
+    - master
+    - merge_requests
   variables:
     ENV: local
     AWS_ACCESS_KEY_ID: test
