@@ -97,7 +97,6 @@ deploy-test:
   variables:
     ENV: $CI_COMMIT_BRANCH
   needs:
-    - unit-test
     - build
   dependencies:
     - build
