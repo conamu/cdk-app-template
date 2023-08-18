@@ -1,2 +1,2 @@
 export API_URL=$(cat .deployed-env | jq -r ".[].apiurl")
-curl --location --request POST "https://gitlab.com/api/v4/projects/$CI_MERGE_REQUEST_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID/notes" --header "PRIVATE-TOKEN: $PROJECT_TOKEN" --header "Content-Type: application/json" --data-raw "{ \"body\": \"Test environment: $API_URL\" }"
+curl --location --request POST "https://gitlab.ho-me.zone/api/v4/projects/$CI_MERGE_REQUEST_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID/notes" --header "PRIVATE-TOKEN: $PROJECT_TOKEN" --header "Content-Type: application/json" --data-raw "{ \"body\": \"Test environment: $API_URL\" }"
