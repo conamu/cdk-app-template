@@ -14,9 +14,8 @@ func GetApiGateway(stack constructs.Construct, id, name, description string) aws
 	api := awsapigateway.NewRestApi(stack, jsii.String(id), &awsapigateway.RestApiProps{
 		Description: jsii.String(description),
 		RestApiName: jsii.String(name),
-		DeployOptions: &awsapigateway.StageOptions{
-			StageName: s(stage),
-		},
+		Deploy:      jsii.Bool(false),
 	})
+
 	return api
 }
