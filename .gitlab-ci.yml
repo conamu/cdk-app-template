@@ -87,8 +87,6 @@ deploy-test:
   stage: build-test-deploy
   variables:
     ENV: $CI_COMMIT_BRANCH
-  only:
-    - merge_requests
   needs:
     - unit-test
     - acceptance-test
@@ -105,14 +103,14 @@ deploy-test:
     - ./scripts/test-env-msg.sh
   allow_failure: false
   rules:
-    - when: manual
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
+      allow_failure: true
 
 teardown-test:
   stage: build-test-deploy
   variables:
     ENV: $CI_COMMIT_BRANCH
-  only:
-    - merge_requests
   needs:
     - deploy-test
   before_script:
@@ -124,7 +122,9 @@ teardown-test:
     - cdk destroy
   allow_failure: false
   rules:
-    - when: manual
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
+      allow_failure: true
 
 deploy-staging:
   stage: build-test-deploy
@@ -150,8 +150,6 @@ deploy-prod:
   stage: build-test-deploy
   variables:
     ENV: production
-  only:
-    - master
   needs:
     - build-prod
     - unit-test
@@ -168,7 +166,9 @@ deploy-prod:
     - ./scripts/deploy.sh
   allow_failure: false
   rules:
-    - when: manual
+    - if: $CI_COMMIT_BRANCH == "master"
+      when: manual
+      allow_failure: true
 
 sonarqube-check:
   image:
