@@ -95,7 +95,7 @@ acceptance-test:
 deploy-test:
   stage: build-test-deploy
   variables:
-    ENV: $CI_COMMIT_BRANCH
+    ENV: $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
   needs:
     - build
   dependencies:
@@ -116,7 +116,7 @@ deploy-test:
 teardown-test:
   stage: build-test-deploy
   variables:
-    ENV: $CI_COMMIT_BRANCH
+    ENV: $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
   needs:
     - deploy-test
     - build
