@@ -6,6 +6,29 @@ stages:
 build:
   image: golang:latest
   stage: build-test-deploy
+  only:
+    - master
+    - merge_requests
+  before_script:
+    - apt update
+    - apt install zip -y
+  script:
+    - ./scripts/build.sh
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - internal/app/*/*.zip
+
+build-prod:
+  image: golang:latest
+  stage: build-test-deploy
+  variables:
+    ENV: production
+  only:
+    - master
+  needs:
+    - unit-test
+    - acceptance-test
   before_script:
     - apt update
     - apt install zip -y
@@ -19,6 +42,9 @@ build:
 unit-test:
   image: golang:latest
   stage: build-test-deploy
+  only:
+    - master
+    - merge_requests
   before_script:
     - go install gotest.tools/gotestsum@latest
   script:
@@ -31,7 +57,11 @@ unit-test:
 acceptance-test:
   image: docker:24.0.5
   stage: build-test-deploy
+  only:
+    - master
+    - merge_requests
   variables:
+    ENV: local
     AWS_ACCESS_KEY_ID: test
     AWS_SECRET_ACCESS_KEY: test
     CDK_DEPLOY_ACCOUNT: 000000000000
@@ -51,7 +81,7 @@ acceptance-test:
     - apk update
     - apk add --update gcc musl-dev linux-headers py3-pip python3 python3-dev npm go
     - npm install -g aws-cdk-local aws-cdk
-    - python3 -m pip install localstack awscli
+    - python3 -m pip install awscli
   script:
     - sleep 30
     - dind_ip="$(getent hosts docker | cut -d' ' -f1)"
@@ -62,27 +92,89 @@ acceptance-test:
     - ./scripts/localstack-deploy.sh
 
 
+deploy-test:
+  stage: build-test-deploy
+  variables:
+    ENV: $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
+  needs:
+    - build
+  dependencies:
+    - build
+  before_script:
+    - apk update
+    - apk add --update npm go curl jq
+    - npm install -g aws-cdk-local aws-cdk
+  script:
+    - ./scripts/deploy.sh
+    - ./scripts/test-env-msg.sh
+  allow_failure: false
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: always
+      allow_failure: false
+
+teardown-test:
+  stage: build-test-deploy
+  variables:
+    ENV: $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME
+  needs:
+    - deploy-test
+    - build
+  dependencies:
+    - build
+  before_script:
+    - apk update
+    - apk add --update npm go
+    - npm install -g aws-cdk-local aws-cdk
+  script:
+    - cdk destroy --force
+  allow_failure: false
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
+      allow_failure: true
 
 deploy-staging:
   stage: build-test-deploy
+  variables:
+    ENV: staging
+  only:
+    - master
   needs:
     - unit-test
     - acceptance-test
+    - build
+  dependencies:
+    - build
+  before_script:
+    - apk update
+    - apk add --update npm go
+    - npm install -g aws-cdk-local aws-cdk
   script:
-    - echo "Deployment to staging"
+    - ./scripts/deploy.sh
 
 deploy-prod:
   stage: build-test-deploy
+  variables:
+    ENV: production
   needs:
+    - build-prod
     - unit-test
     - acceptance-test
     - deploy-staging
+  dependencies:
+    - build-prod
+  before_script:
+    - apk update
+    - apk add --update npm go
+    - npm install -g aws-cdk-local aws-cdk
   script:
-    - echo "This job deploys something from the $CI_COMMIT_BRANCH branch."
-  environment: production
+    - ./scripts/deploy.sh
   allow_failure: false
   rules:
-    - when: manual
+    - if: $CI_COMMIT_BRANCH == "master"
+      when: manual
+      allow_failure: true
 
 sonarqube-check:
   image:

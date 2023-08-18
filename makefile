@@ -1,8 +1,10 @@
 arch := arm64
 
-local-deploy:
+deploy-staging: build
+	- ./scripts/deploy.sh
+
+local-deploy: build
 	- rm -rd cdk.out
-	- make build
 	- ./scripts/localstack-deploy.sh
 
 localstack-up:
@@ -13,3 +15,6 @@ localstack-down:
 
 build:
 	- ./scripts/build.sh
+
+bootstrap:
+	- cdk bootstrap
