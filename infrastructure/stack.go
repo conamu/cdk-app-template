@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
 	"github.com/spf13/viper"
 	"os"
+	"regexp"
 
 	// "github.com/aws/aws-cdk-go/awscdk/v2/awssqs"
 	"github.com/aws/constructs-go/constructs/v10"
@@ -24,6 +25,8 @@ func BuildStack() {
 
 	app := awscdk.NewApp(nil)
 	stage = os.Getenv("ENV")
+
+	stage = removeNumbersAndSpecialChars(stage)
 
 	requireApiKey := true
 
@@ -113,4 +116,9 @@ func newStack(scope constructs.Construct, id string, props *stackProps) awscdk.S
 	stack := awscdk.NewStack(scope, &id, &sprops)
 
 	return stack
+}
+
+func removeNumbersAndSpecialChars(input string) string {
+	reg := regexp.MustCompile("[^a-zA-Z]+")
+	return reg.ReplaceAllString(input, "")
 }
