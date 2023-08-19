@@ -1,5 +1,3 @@
-arch := arm64
-
 deploy-staging: build
 	- ./scripts/deploy.sh
 
@@ -18,3 +16,6 @@ build:
 
 bootstrap:
 	- cdk bootstrap
+
+destroy:
+	- cdk destroy

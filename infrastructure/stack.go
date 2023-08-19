@@ -2,9 +2,7 @@ package infrastructure
 
 import (
 	"github.com/aws/aws-cdk-go/awscdk/v2"
-	"github.com/aws/aws-cdk-go/awscdk/v2/awsapigateway"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsiam"
-	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
 	"github.com/spf13/viper"
 	"os"
 	"regexp"
@@ -26,6 +24,7 @@ func BuildStack() {
 	app := awscdk.NewApp(nil)
 	stage = os.Getenv("ENV")
 
+	// This is necessary to be able to use git branch names in cloudformation stacks
 	stage = removeNumbersAndSpecialChars(stage)
 
 	requireApiKey := true
@@ -41,52 +40,23 @@ func BuildStack() {
 		},
 	})
 
-	ApiGatewayRoot := GetApiGateway(stack,
+	lambdaFunctions, meta := getLambdas(stack, stage)
+
+	lambdaVersions := buildLambdaVersions(stack, lambdaFunctions)
+
+	// Grant permissions to api gateway to invoke functions
+	for _, version := range lambdaVersions {
+		version.GrantInvoke(awsiam.NewServicePrincipal(s("apigateway.amazonaws.com"), &awsiam.ServicePrincipalOpts{}))
+	}
+	ApiGatewayRoot := buildApiGateway(stack,
 		"transactions-api-"+stage,
 		"Transaction API "+stage,
 		"Api for transactions and orders")
 
-	dep := awsapigateway.NewDeployment(stack, s("app-deployment-"+stage), &awsapigateway.DeploymentProps{
-		Api: ApiGatewayRoot,
-	})
-
-	apiStage := awsapigateway.NewStage(stack, s(stage+"-stage"), &awsapigateway.StageProps{
-		StageName:  s(stage),
-		Deployment: dep,
-	})
+	buildApiResources(stack, ApiGatewayRoot, meta, lambdaVersions, requireApiKey)
 
 	// Set api gateway id for easier testing
 	awscdk.Tags_Of(ApiGatewayRoot).Add(s("_custom_id_"), s("gofq6f9983"), &awscdk.TagProps{})
-
-	PingLambda := GetPingLambda(stack, "ping-lambda-"+stage)
-
-	NewPingLambdaVersion := awslambda.NewVersion(stack, s("ping-"+stage+"-version"), &awslambda.VersionProps{
-		RemovalPolicy: awscdk.RemovalPolicy_RETAIN,
-		Lambda:        PingLambda,
-	})
-
-	NewPingLambdaVersion.GrantInvoke(awsiam.NewServicePrincipal(s("apigateway.amazonaws.com"), &awsiam.ServicePrincipalOpts{}))
-
-	PingIntegration := awsapigateway.NewLambdaIntegration(NewPingLambdaVersion, &awsapigateway.LambdaIntegrationOptions{})
-
-	ApiGatewayRoot.Root().
-		AddResource(s("ping"), &awsapigateway.ResourceOptions{}).
-		AddMethod(s("GET"), PingIntegration, &awsapigateway.MethodOptions{
-			ApiKeyRequired: &requireApiKey,
-		})
-
-	var usagePlanApiStages []*awsapigateway.UsagePlanPerApiStage
-	usagePlanApiStages = append(usagePlanApiStages, &awsapigateway.UsagePlanPerApiStage{
-		Api:   ApiGatewayRoot,
-		Stage: apiStage,
-	})
-
-	awsapigateway.NewUsagePlan(stack, s("default-usage-plan-"+stage), &awsapigateway.UsagePlanProps{
-		ApiStages: &usagePlanApiStages,
-		Name:      s("default-plan-" + stage),
-	})
-
-	ApiGatewayRoot.SetDeploymentStage(apiStage)
 
 	awscdk.NewCfnOutput(stack, s("api-url"), &awscdk.CfnOutputProps{
 		Value: ApiGatewayRoot.Url(),
