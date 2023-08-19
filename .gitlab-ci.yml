@@ -17,7 +17,7 @@ build:
   artifacts:
     expire_in: 1 week
     paths:
-      - internal/app/*/*.zip
+      - internal/app/lambda/*/*.zip
 
 build-prod:
   image: golang:latest
@@ -37,7 +37,7 @@ build-prod:
   artifacts:
     expire_in: 1 week
     paths:
-      - internal/app/*/*.zip
+      - internal/app/lambda/*/*.zip
 
 unit-test:
   image: golang:latest
