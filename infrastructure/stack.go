@@ -40,20 +40,18 @@ func BuildStack() {
 		},
 	})
 
-	lambdaFunctions, meta := getLambdas(stack, stage)
-
-	lambdaVersions := buildLambdaVersions(stack, lambdaFunctions)
+	lambdaApiMeta := getLambdas(stack, stage)
 
 	// Grant permissions to api gateway to invoke functions
-	for _, version := range lambdaVersions {
-		version.GrantInvoke(awsiam.NewServicePrincipal(s("apigateway.amazonaws.com"), &awsiam.ServicePrincipalOpts{}))
+	for _, meta := range lambdaApiMeta {
+		meta.apiFunctionVersion.GrantInvoke(awsiam.NewServicePrincipal(s("apigateway.amazonaws.com"), &awsiam.ServicePrincipalOpts{}))
 	}
 	ApiGatewayRoot := buildApiGateway(stack,
 		"transactions-api-"+stage,
 		"Transaction API "+stage,
 		"Api for transactions and orders")
 
-	buildApiResources(stack, ApiGatewayRoot, meta, lambdaVersions, requireApiKey)
+	buildApiResources(stack, ApiGatewayRoot, lambdaApiMeta, requireApiKey, stage)
 
 	// Set api gateway id for easier testing
 	awscdk.Tags_Of(ApiGatewayRoot).Add(s("_custom_id_"), s("gofq6f9983"), &awscdk.TagProps{})

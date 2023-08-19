@@ -7,9 +7,10 @@ import (
 	"github.com/aws/jsii-runtime-go"
 )
 
-type apiMetadata struct {
-	apiPath   string
-	apiMethod string
+type apiResourceMetadata struct {
+	apiPath            string
+	apiMethod          string
+	apiFunctionVersion awslambda.IVersion
 }
 
 func buildApiGateway(stack constructs.Construct, id, name, description string) awsapigateway.RestApi {
@@ -27,16 +28,31 @@ func buildApiGateway(stack constructs.Construct, id, name, description string) a
 }
 
 func buildApiResources(stack constructs.Construct,
-	api awsapigateway.RestApi, meta []*apiMetadata,
-	versions []awslambda.IVersion, requireApiKey bool) {
+	api awsapigateway.RestApi, meta []*apiResourceMetadata, requireApiKey bool, stage string) {
 
-	for idx, ver := range versions {
-		integration := awsapigateway.NewLambdaIntegration(ver, nil)
+	resources := make(map[string]awsapigateway.Resource)
 
-		api.Root().
-			AddResource(s(meta[idx].apiPath), nil).
-			AddMethod(s(meta[idx].apiMethod), integration, &awsapigateway.MethodOptions{
-				ApiKeyRequired: &requireApiKey,
+	// Build resources
+	for _, data := range meta {
+		if _, ok := resources[data.apiPath]; ok {
+			continue
+		}
+		resources[data.apiPath] = awsapigateway.NewResource(stack, s(data.apiPath+"-"+stage), &awsapigateway.ResourceProps{
+			Parent:   api.Root(),
+			PathPart: s(data.apiPath),
+		})
+	}
+
+	// Build methods
+	for _, data := range meta {
+		integration := awsapigateway.NewLambdaIntegration(data.apiFunctionVersion, nil)
+
+		awsapigateway.NewMethod(stack,
+			s(data.apiPath+"-"+data.apiMethod+"-"+stage),
+			&awsapigateway.MethodProps{
+				HttpMethod:  s(data.apiMethod),
+				Resource:    resources[data.apiPath],
+				Integration: integration,
 			})
 	}
 

@@ -10,15 +10,14 @@ import (
 	"strings"
 )
 
-func getLambdas(stack constructs.Construct, stage string) ([]awslambda.IFunction, []*apiMetadata) {
+func getLambdas(stack constructs.Construct, stage string) []*apiResourceMetadata {
 	log, _ := logger.Create()
 	dirs, err := os.ReadDir("internal/app/lambda")
 	if err != nil {
 		panic(err)
 	}
 
-	var functions []awslambda.IFunction
-	var apiMeta []*apiMetadata
+	var apiMeta []*apiResourceMetadata
 
 	for _, dir := range dirs {
 		log.Info("Building Lambda: " + dir.Name())
@@ -27,21 +26,24 @@ func getLambdas(stack constructs.Construct, stage string) ([]awslambda.IFunction
 		name := dataStrings[0]
 		method := dataStrings[1]
 
-		md := &apiMetadata{
-			apiPath:   name,
-			apiMethod: strings.ToUpper(method),
+		function, functionName := buildLambda(stack, dir.Name(), stage)
+		version := buildLambdaVersion(stack, function, functionName)
+
+		md := &apiResourceMetadata{
+			apiPath:            name,
+			apiMethod:          strings.ToUpper(method),
+			apiFunctionVersion: version,
 		}
 
-		function := buildLambda(stack, dir.Name(), stage)
-		functions = append(functions, function)
 		apiMeta = append(apiMeta, md)
 	}
-	return functions, apiMeta
+	return apiMeta
 }
 
-func buildLambda(stack constructs.Construct, path, stage string) awslambda.IFunction {
+func buildLambda(stack constructs.Construct, path, stage string) (awslambda.IFunction, string) {
+	name := path + "-" + stage
 	function := awslambda.NewFunction(stack, jsii.String(path+"-lambda-"+stage), &awslambda.FunctionProps{
-		FunctionName: s(path + "-" + stage),
+		FunctionName: &name,
 		Code:         awslambda.AssetCode_FromAsset(jsii.String("internal/app/lambda/"+path+"/bootstrap.zip"), nil),
 		Handler:      jsii.String("bootstrap.zip"),
 		Runtime:      awslambda.Runtime_PROVIDED_AL2(),
@@ -51,18 +53,14 @@ func buildLambda(stack constructs.Construct, path, stage string) awslambda.IFunc
 		},
 	})
 
-	return function
+	return function, name
 }
 
-func buildLambdaVersions(stack constructs.Construct, functions []awslambda.IFunction) []awslambda.IVersion {
-	var lambdaVersions []awslambda.IVersion
+func buildLambdaVersion(stack constructs.Construct, function awslambda.IFunction, name string) awslambda.IVersion {
 
-	for _, function := range functions {
-		version := awslambda.NewVersion(stack, s("ping-"+stage+"-version"), &awslambda.VersionProps{
-			RemovalPolicy: awscdk.RemovalPolicy_RETAIN,
-			Lambda:        function,
-		})
-		lambdaVersions = append(lambdaVersions, version)
-	}
-	return lambdaVersions
+	version := awslambda.NewVersion(stack, s(name+"-version"), &awslambda.VersionProps{
+		RemovalPolicy: awscdk.RemovalPolicy_RETAIN,
+		Lambda:        function,
+	})
+	return version
 }
