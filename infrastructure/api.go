@@ -74,10 +74,12 @@ func buildApiResources(stack constructs.Construct,
 		Stage: apiStage,
 	})
 
+	apiKey := awsapigateway.NewApiKey(stack, s("default-key-"+stage), nil)
+
 	awsapigateway.NewUsagePlan(stack, s("default-usage-plan-"+stage), &awsapigateway.UsagePlanProps{
 		ApiStages: &usagePlanApiStages,
 		Name:      s("default-plan-" + stage),
-	})
+	}).AddApiKey(apiKey, nil)
 
 	api.SetDeploymentStage(apiStage)
 }
