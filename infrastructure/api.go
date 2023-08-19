@@ -53,6 +53,9 @@ func buildApiResources(stack constructs.Construct,
 				HttpMethod:  s(data.apiMethod),
 				Resource:    resources[data.apiPath],
 				Integration: integration,
+				Options: &awsapigateway.MethodOptions{
+					ApiKeyRequired: &requireApiKey,
+				},
 			})
 	}
 

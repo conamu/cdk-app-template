@@ -17,7 +17,7 @@ func Handler(ctx context.Context, req events.APIGatewayProxyRequest) (*events.AP
 		MultiValueHeaders: nil,
 		Body: `{
 								"message":"Hello World!",
-								"bodyCount": 15
+								"bodyCount": 16
 							}`,
 		IsBase64Encoded: false,
 	}, nil
