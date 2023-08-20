@@ -49,6 +49,11 @@ Set environment variables in your repo:
 AWS_ACCESS_KEY_ID -> Access key id of the deployer user in your account
 AWS_SECRET_ACCESS_KEY -> Secret Access Key of the deployer account
 PROJECT_TOKEN -> GitLab Project Access token with api scope
+
+To run automatic Acceptance tests through postman, get these details out of your postman client:
+POSTMAN_ENV_ID 
+POSTMAN_COLLECTION_ID
+POSTMAN_API_KEY
 ```
 
 ### Local development deployment

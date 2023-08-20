@@ -80,7 +80,7 @@ acceptance-test:
   before_script:
     - apk update
     - apk add --update gcc musl-dev linux-headers py3-pip python3 python3-dev npm go
-    - npm install -g aws-cdk-local aws-cdk
+    - npm install -g aws-cdk-local aws-cdk newman
     - python3 -m pip install awscli
   script:
     - sleep 30
@@ -90,7 +90,8 @@ acceptance-test:
     - docker-compose -f localstack.compose up -d
     - aws configure set aws_access_key_id "test" && aws configure set aws_secret_access_key "test" && aws configure set region "eu-west-1" && aws configure set output "json"
     - ./scripts/localstack-deploy.sh
-
+    - sleep 10
+    - newman run https://api.getpostman.com/collections/$POSTMAN_COLLECTION_ID?apikey=$POSTMAN_API_KEY --environment https://api.getpostman.com/environments/$POSTMAN_ENV_ID?apikey=$POSTMAN_API_KEY
 
 deploy-test:
   stage: build-test-deploy
