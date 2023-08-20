@@ -94,7 +94,6 @@ acceptance-test:
     - aws configure set aws_access_key_id "test" && aws configure set aws_secret_access_key "test" && aws configure set region "eu-west-1" && aws configure set output "json"
     - ./scripts/localstack-deploy.sh
     - sleep 10
-    - ping gofq6f9983.execute-api.localhost.localstack.cloud
     - newman run https://api.getpostman.com/collections/$POSTMAN_COLLECTION_ID?apikey=$POSTMAN_API_KEY --environment https://api.getpostman.com/environments/$POSTMAN_ENV_ID?apikey=$POSTMAN_API_KEY
 
 deploy-test:
