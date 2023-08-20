@@ -16,7 +16,10 @@ type stackProps struct {
 	awscdk.StackProps
 }
 
+const appName = "AWS-CDK-Template"
+
 var stage string
+var StackName string
 
 func BuildStack() {
 	defer jsii.Close()
@@ -27,15 +30,17 @@ func BuildStack() {
 	// This is necessary to be able to use git branch names in cloudformation stacks
 	stage = removeNumbersAndSpecialChars(stage)
 
+	StackName = buildApplicationName()
+
 	requireApiKey := true
 
 	if stage != "production" && stage != "staging" {
 		requireApiKey = false
 	}
 
-	stack := newStack(app, "CdkAppStack-"+stage, &stackProps{
+	stack := newStack(app, StackName, &stackProps{
 		awscdk.StackProps{
-			StackName: s("Cdk-App-Template-" + stage),
+			StackName: s(StackName),
 			Env:       env(),
 		},
 	})
@@ -46,10 +51,7 @@ func BuildStack() {
 	for _, meta := range lambdaApiMeta {
 		meta.apiFunctionVersion.GrantInvoke(awsiam.NewServicePrincipal(s("apigateway.amazonaws.com"), &awsiam.ServicePrincipalOpts{}))
 	}
-	ApiGatewayRoot := buildApiGateway(stack,
-		"transactions-api-"+stage,
-		"Transaction API "+stage,
-		"Api for transactions and orders")
+	ApiGatewayRoot := buildApiGateway(stack, StackName)
 
 	buildApiResources(stack, ApiGatewayRoot, lambdaApiMeta, requireApiKey, stage)
 
@@ -89,4 +91,8 @@ func newStack(scope constructs.Construct, id string, props *stackProps) awscdk.S
 func removeNumbersAndSpecialChars(input string) string {
 	reg := regexp.MustCompile("[^a-zA-Z]+")
 	return reg.ReplaceAllString(input, "")
+}
+
+func buildApplicationName() string {
+	return appName + "-" + stage
 }

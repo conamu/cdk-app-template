@@ -13,13 +13,12 @@ type apiFunctionResource struct {
 	apiFunctionVersion awslambda.IVersion
 }
 
-func buildApiGateway(stack constructs.Construct, id, name, description string) awsapigateway.RestApi {
+func buildApiGateway(stack constructs.Construct, name string) awsapigateway.RestApi {
 	if stage == "" {
 		stage = "local"
 	}
 
-	api := awsapigateway.NewRestApi(stack, jsii.String(id), &awsapigateway.RestApiProps{
-		Description: jsii.String(description),
+	api := awsapigateway.NewRestApi(stack, jsii.String(name), &awsapigateway.RestApiProps{
 		RestApiName: jsii.String(name),
 		Deploy:      jsii.Bool(false),
 	})

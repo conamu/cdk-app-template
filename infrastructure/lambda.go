@@ -1,7 +1,6 @@
 package infrastructure
 
 import (
-	"cdk-app-template/internal/pkg/logger"
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
 	"github.com/aws/constructs-go/constructs/v10"
@@ -11,7 +10,6 @@ import (
 )
 
 func getLambdas(stack constructs.Construct, stage string) []*apiFunctionResource {
-	log, _ := logger.Create()
 	dirs, err := os.ReadDir("internal/app/lambda")
 	if err != nil {
 		panic(err)
@@ -20,8 +18,6 @@ func getLambdas(stack constructs.Construct, stage string) []*apiFunctionResource
 	var apiMeta []*apiFunctionResource
 
 	for _, dir := range dirs {
-		log.Info("Building Lambda: " + dir.Name())
-
 		dataStrings := strings.Split(dir.Name(), "-")
 		name := dataStrings[0]
 		method := dataStrings[1]
@@ -50,6 +46,10 @@ func buildLambda(stack constructs.Construct, path, stage string) (awslambda.IFun
 		Architecture: awslambda.Architecture_ARM_64(),
 		CurrentVersionOptions: &awslambda.VersionOptions{
 			RemovalPolicy: awscdk.RemovalPolicy_RETAIN,
+		},
+		Environment: &map[string]*string{
+			"STAGE":      s(stage),
+			"STACK_NAME": s(appName),
 		},
 	})
 

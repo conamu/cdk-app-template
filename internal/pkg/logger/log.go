@@ -2,14 +2,27 @@ package logger
 
 import (
 	"cdk-app-template/internal/pkg/constants"
-	errors "cdk-app-template/internal/pkg/error"
 	"context"
 	"go.uber.org/zap"
+	"log/slog"
+	"os"
 )
 
-func Create() (*zap.Logger, error) {
-	logger, err := zap.NewDevelopment()
-	return logger, errors.Wrap("error creating logger", err)
+func Create() *slog.Logger {
+	stackName := os.Getenv("STACK_NAME")
+	stage := os.Getenv("STAGE")
+
+	handler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+		AddSource:   true,
+		Level:       slog.LevelDebug,
+		ReplaceAttr: nil,
+	})
+	logger := slog.New(handler)
+
+	logger = logger.With("App", stackName)
+	logger = logger.With("Stage", stage)
+
+	return logger
 }
 
 func FromContext(ctx context.Context) *zap.Logger {
