@@ -85,6 +85,7 @@ acceptance-test:
   script:
     - sleep 30
     - dind_ip="$(getent hosts docker | cut -d' ' -f1)"
+    - DOCKER_HOST="tcp://${dind_ip}:2375"
     - echo "${dind_ip} localhost.localstack.cloud" >> /etc/hosts
     - cat /etc/hosts
     - docker pull localstack/localstack:latest
