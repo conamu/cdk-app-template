@@ -7,7 +7,7 @@ import (
 	"github.com/aws/jsii-runtime-go"
 )
 
-type apiResourceMetadata struct {
+type apiFunctionResource struct {
 	apiPath            string
 	apiMethod          string
 	apiFunctionVersion awslambda.IVersion
@@ -28,7 +28,7 @@ func buildApiGateway(stack constructs.Construct, id, name, description string) a
 }
 
 func buildApiResources(stack constructs.Construct,
-	api awsapigateway.RestApi, meta []*apiResourceMetadata, requireApiKey bool, stage string) {
+	api awsapigateway.RestApi, meta []*apiFunctionResource, requireApiKey bool, stage string) {
 
 	resources := make(map[string]awsapigateway.Resource)
 

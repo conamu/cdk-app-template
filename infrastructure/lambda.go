@@ -10,14 +10,14 @@ import (
 	"strings"
 )
 
-func getLambdas(stack constructs.Construct, stage string) []*apiResourceMetadata {
+func getLambdas(stack constructs.Construct, stage string) []*apiFunctionResource {
 	log, _ := logger.Create()
 	dirs, err := os.ReadDir("internal/app/lambda")
 	if err != nil {
 		panic(err)
 	}
 
-	var apiMeta []*apiResourceMetadata
+	var apiMeta []*apiFunctionResource
 
 	for _, dir := range dirs {
 		log.Info("Building Lambda: " + dir.Name())
@@ -29,7 +29,7 @@ func getLambdas(stack constructs.Construct, stage string) []*apiResourceMetadata
 		function, functionName := buildLambda(stack, dir.Name(), stage)
 		version := buildLambdaVersion(stack, function, functionName)
 
-		md := &apiResourceMetadata{
+		md := &apiFunctionResource{
 			apiPath:            name,
 			apiMethod:          strings.ToUpper(method),
 			apiFunctionVersion: version,
