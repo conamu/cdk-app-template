@@ -69,7 +69,7 @@ acceptance-test:
     AWS_DEFAULT_REGION: eu-west-1
     #DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
-    LOCALSTACK_HOSTNAME: localhost.localstack.cloud
+    #LOCALSTACK_HOSTNAME: localhost.localstack.cloud
     HOSTNAME_EXTERNAL: localhost.localstack.cloud
   needs:
     - build
