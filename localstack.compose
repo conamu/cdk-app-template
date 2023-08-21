@@ -7,8 +7,8 @@ services:
     ports:
       - "4566:4566"            # LocalStack Gateway
       - "4510-4559:4510-4559"  # ext services port range
-      #- "53:53"                # DNS config
-      #- "53:53/udp"            # DNS config
+      #- "53:53"                DNS config
+      #- "53:53/udp"            DNS config
       #- "443:443"              LocalStack HTTPS Gateway
     environment:
       - DEBUG=1
