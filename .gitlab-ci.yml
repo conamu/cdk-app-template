@@ -70,7 +70,7 @@ acceptance-test:
     #DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
     #LOCALSTACK_HOSTNAME: localhost.localstack.cloud
-    HOSTNAME_EXTERNAL: localhost.localstack.cloud
+    #HOSTNAME_EXTERNAL: localhost.localstack.cloud
   needs:
     - build
   #services:
