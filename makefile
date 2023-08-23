@@ -12,7 +12,7 @@ localstack-down:
 	- docker-compose -f localstack.compose down
 
 build:
-	- ./scripts/build.sh
+	- arch=arm64 ./scripts/build.sh
 
 bootstrap:
 	- cdk bootstrap

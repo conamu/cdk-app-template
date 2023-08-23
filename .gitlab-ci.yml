@@ -13,7 +13,7 @@ build:
     - apt update
     - apt install zip -y
   script:
-    - ./scripts/build.sh
+    - arch=amd64 ./scripts/build.sh
   artifacts:
     expire_in: 1 week
     paths:
@@ -67,27 +67,27 @@ acceptance-test:
     CDK_DEPLOY_ACCOUNT: 000000000000
     CDK_DEPLOY_REGION: eu-west-1
     AWS_DEFAULT_REGION: eu-west-1
-    #DOCKER_HOST: tcp://docker:2375
+    DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
-    #LOCALSTACK_HOSTNAME: localhost.localstack.cloud
-    #HOSTNAME_EXTERNAL: localhost.localstack.cloud
+    LOCALSTACK_HOSTNAME: localhost.localstack.cloud
+    HOSTNAME_EXTERNAL: localhost.localstack.cloud
   needs:
     - build
-  #services:
-  #  - name: docker:24.0.5-dind
-  #    alias: docker
-  #    command: ["--tls=false"]
+  services:
+    - name: docker:24.0.5-dind
+      alias: docker
+      command: ["--tls=false"]
   before_script:
     - apk update
     - apk add --update gcc musl-dev linux-headers py3-pip python3 python3-dev npm go
     - npm install -g aws-cdk-local aws-cdk newman
     - python3 -m pip install awscli
   script:
-    #- sleep 30
-    #- dind_ip="$(getent hosts docker | cut -d' ' -f1)"
-    #- DOCKER_HOST="tcp://${dind_ip}:2375"
-    #- echo "${dind_ip} localhost.localstack.cloud" >> /etc/hosts
-    #- echo "${dind_ip} gofq6f9983.execute-api.localhost.localstack.cloud" >> /etc/hosts
+    - sleep 30
+    - dind_ip="$(getent hosts docker | cut -d' ' -f1)"
+    - DOCKER_HOST="tcp://${dind_ip}:2375"
+    - echo "${dind_ip} localhost.localstack.cloud" >> /etc/hosts
+    - echo "${dind_ip} gofq6f9983.execute-api.localhost.localstack.cloud" >> /etc/hosts
     - cat /etc/hosts
     - docker pull localstack/localstack-pro:latest
     - docker-compose -f localstack.compose up -d
