@@ -3,7 +3,7 @@ version: "3.8"
 services:
   localstack:
     container_name: "localstack"
-    image: localstack/localstack:latest
+    image: localstack/localstack-pro:latest
     ports:
       - "4566:4566"            # LocalStack Gateway
       - "4510-4559:4510-4559"  # ext services port range
@@ -16,6 +16,7 @@ services:
       - LS_LOG=info
       - GATEWAY_LISTEN=0.0.0.0
       - LAMBDA_RUNTIME_ENVIRONMENT_TIMEOUT=3
+      - LOCALSTACK_API_KEY=1HKoKWVjl9
     volumes:
       - ~/.localstack-data:/var/lib/localstack
       - /var/run/docker.sock:/var/run/docker.sock
