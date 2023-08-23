@@ -87,7 +87,6 @@ acceptance-test:
     - dind_ip="$(getent hosts docker | cut -d' ' -f1)"
     - DOCKER_HOST="tcp://${dind_ip}:2375"
     - echo "${dind_ip} localhost.localstack.cloud" >> /etc/hosts
-    - echo "${dind_ip} gofq6f9983.execute-api.localhost.localstack.cloud" >> /etc/hosts
     - cat /etc/hosts
     - docker pull localstack/localstack-pro:latest
     - docker-compose -f localstack.compose up -d
