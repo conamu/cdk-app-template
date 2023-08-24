@@ -77,7 +77,7 @@ acceptance-test:
       command: ["--tls=false"]
   before_script:
     - apk update
-    - apk add gcc musl-dev linux-headers py3-pip python3 python3-dev
+    - apk add gcc musl-dev linux-headers py3-pip python3 python3-dev npm go
     - python3 -m pip install localstack awscli
     - npm install -g aws-cdk-local aws-cdk newman
   script:
