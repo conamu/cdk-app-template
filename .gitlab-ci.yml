@@ -87,6 +87,7 @@ acceptance-test:
     - DOCKER_HOST="tcp://${dind_ip}:2375"
     - echo "${dind_ip} localhost.localstack.cloud" >> /etc/hosts
     - cat /etc/hosts
+    - touch ~/.aws/credentials
     - ls ~/.aws
     - echo "$AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY"
     - docker pull localstack/localstack-pro:latest
