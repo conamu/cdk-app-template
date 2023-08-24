@@ -64,7 +64,6 @@ acceptance-test:
     ENV: local
     AWS_ACCESS_KEY_ID: test
     AWS_SECRET_ACCESS_KEY: test
-    AWS_SESSION_TOKEN: testsession69420
     AWS_DEFAULT_REGION: eu-west-1
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
