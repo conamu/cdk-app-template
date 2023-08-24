@@ -3,3 +3,6 @@ output = json
 region = eu-west-1
 aws_access_key_id = test
 aws_secret_access_key = test
+
+[profile default]
+region = eu-west-1
