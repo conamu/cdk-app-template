@@ -84,8 +84,8 @@ acceptance-test:
     - npm install -g aws-cdk-local aws-cdk newman
   script:
     - sleep 30
-    - mkdir .aws
-    - cp credentials .aws/credentials
+    - mkdir ~/.aws
+    - cp credentials ~/.aws/credentials
     - dind_ip="$(getent hosts docker | cut -d' ' -f1)"
     - echo "${dind_ip} localhost.localstack.cloud" >> /etc/hosts
     - DOCKER_HOST="tcp://${dind_ip}:2375"
