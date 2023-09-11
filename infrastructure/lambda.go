@@ -38,7 +38,7 @@ func getLambdas(stack constructs.Construct, stage string) []*apiFunctionResource
 
 func buildLambda(stack constructs.Construct, path, stage string) (awslambda.IFunction, string) {
 	name := path + "-" + stage
-	function := awslambda.NewFunction(stack, jsii.String(path+"-lambda-"+stage), &awslambda.FunctionProps{
+	functionProps := &awslambda.FunctionProps{
 		FunctionName: &name,
 		Code:         awslambda.AssetCode_FromAsset(jsii.String("internal/app/lambda/"+path+"/bootstrap.zip"), nil),
 		Handler:      jsii.String("bootstrap.zip"),
@@ -51,16 +51,21 @@ func buildLambda(stack constructs.Construct, path, stage string) (awslambda.IFun
 			"STAGE":      s(stage),
 			"STACK_NAME": s(appName),
 		},
-	})
+	}
 
-	return function, name
+	return awslambda.NewFunction(stack, jsii.String(path+"-lambda-"+stage), functionProps), path
 }
 
 func buildLambdaVersion(stack constructs.Construct, function awslambda.IFunction, name string) awslambda.IVersion {
 
-	version := awslambda.NewVersion(stack, s(name+"-version"), &awslambda.VersionProps{
+	props := &awslambda.VersionProps{
 		RemovalPolicy: awscdk.RemovalPolicy_RETAIN,
 		Lambda:        function,
-	})
-	return version
+	}
+
+	if name == "ping-get" {
+		props.ProvisionedConcurrentExecutions = jsii.Number(1)
+	}
+
+	return awslambda.NewVersion(stack, s(name+"-version"), props)
 }

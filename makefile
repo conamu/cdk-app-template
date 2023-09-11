@@ -1,4 +1,4 @@
-deploy-staging: build
+deploy: build
 	- ./scripts/deploy.sh
 
 local-deploy: build

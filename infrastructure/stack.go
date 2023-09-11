@@ -26,6 +26,9 @@ func BuildStack() {
 
 	app := awscdk.NewApp(nil)
 	stage = os.Getenv("ENV")
+	if stage == "" {
+		stage = "dev"
+	}
 
 	// This is necessary to be able to use git branch names in cloudformation stacks
 	stage = removeNumbersAndSpecialChars(stage)
@@ -54,9 +57,6 @@ func BuildStack() {
 	ApiGatewayRoot := buildApiGateway(stack, StackName)
 
 	buildApiResources(stack, ApiGatewayRoot, lambdaApiMeta, requireApiKey, stage)
-
-	// Set api gateway id for easier testing
-	awscdk.Tags_Of(ApiGatewayRoot).Add(s("_custom_id_"), s("gofq6f9983"), &awscdk.TagProps{})
 
 	awscdk.NewCfnOutput(stack, s("api-url"), &awscdk.CfnOutputProps{
 		Value: ApiGatewayRoot.Url(),

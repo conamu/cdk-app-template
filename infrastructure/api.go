@@ -14,9 +14,6 @@ type apiFunctionResource struct {
 }
 
 func buildApiGateway(stack constructs.Construct, name string) awsapigateway.RestApi {
-	if stage == "" {
-		stage = "local"
-	}
 
 	api := awsapigateway.NewRestApi(stack, jsii.String(name), &awsapigateway.RestApiProps{
 		RestApiName: jsii.String(name),
