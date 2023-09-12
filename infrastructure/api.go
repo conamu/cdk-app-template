@@ -30,6 +30,10 @@ func buildApiResources(stack constructs.Construct,
 
 	// Build resources
 	for _, data := range meta {
+		if data.apiMethod == "" {
+			continue
+		}
+
 		if _, ok := resources[data.apiPath]; ok {
 			continue
 		}
@@ -41,6 +45,11 @@ func buildApiResources(stack constructs.Construct,
 
 	// Build methods
 	for _, data := range meta {
+
+		if data.apiMethod == "" {
+			continue
+		}
+
 		integration := awsapigateway.NewLambdaIntegration(data.apiFunctionVersion, nil)
 
 		awsapigateway.NewMethod(stack,

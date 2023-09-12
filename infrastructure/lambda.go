@@ -19,8 +19,13 @@ func getLambdas(stack constructs.Construct, stage string) []*apiFunctionResource
 
 	for _, dir := range dirs {
 		dataStrings := strings.Split(dir.Name(), "-")
+
 		name := dataStrings[0]
-		method := dataStrings[1]
+		method := ""
+
+		if len(dataStrings) == 2 {
+			method = dataStrings[1]
+		}
 
 		function, functionName := buildLambda(stack, dir.Name(), stage)
 		version := buildLambdaVersion(stack, function, functionName)
@@ -45,7 +50,7 @@ func buildLambda(stack constructs.Construct, path, stage string) (awslambda.IFun
 		Runtime:      awslambda.Runtime_PROVIDED_AL2(),
 		Architecture: awslambda.Architecture_ARM_64(),
 		CurrentVersionOptions: &awslambda.VersionOptions{
-			RemovalPolicy: awscdk.RemovalPolicy_RETAIN,
+			RemovalPolicy: awscdk.RemovalPolicy_DESTROY,
 		},
 		Environment: &map[string]*string{
 			"STAGE":      s(stage),
@@ -59,12 +64,8 @@ func buildLambda(stack constructs.Construct, path, stage string) (awslambda.IFun
 func buildLambdaVersion(stack constructs.Construct, function awslambda.IFunction, name string) awslambda.IVersion {
 
 	props := &awslambda.VersionProps{
-		RemovalPolicy: awscdk.RemovalPolicy_RETAIN,
+		RemovalPolicy: awscdk.RemovalPolicy_DESTROY,
 		Lambda:        function,
-	}
-
-	if name == "ping-get" {
-		props.ProvisionedConcurrentExecutions = jsii.Number(1)
 	}
 
 	return awslambda.NewVersion(stack, s(name+"-version"), props)
