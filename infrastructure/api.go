@@ -5,6 +5,7 @@ import (
 	"github.com/aws/aws-cdk-go/awscdk/v2/awslambda"
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
+	"time"
 )
 
 type apiFunctionResource struct {
@@ -64,7 +65,8 @@ func buildApiResources(stack constructs.Construct,
 			})
 	}
 
-	dep := awsapigateway.NewDeployment(stack, s("app-deployment-"+stage), &awsapigateway.DeploymentProps{
+	// Change deployment ID based on timestamp to force AWS to create a new deployment.
+	dep := awsapigateway.NewDeployment(stack, s("app-deployment-"+stage+"-"+time.Now().String()), &awsapigateway.DeploymentProps{
 		Api: api,
 	})
 
