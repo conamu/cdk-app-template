@@ -5,7 +5,6 @@ import (
 	"cdk-app-template/internal/pkg/domain/enhance"
 	"cdk-app-template/internal/pkg/logger"
 	"context"
-	"encoding/json"
 	"github.com/aws/aws-lambda-go/events"
 )
 
@@ -22,16 +21,11 @@ func Handler(ctx context.Context, req events.APIGatewayProxyRequest) (*events.AP
 
 	body := enhance.Enhance(name)
 
-	data, err := json.Marshal(&body)
-	if err != nil {
-		log.Error(err.Error())
-	}
-
 	return &events.APIGatewayProxyResponse{
 		StatusCode:        200,
 		Headers:           nil,
 		MultiValueHeaders: nil,
-		Body:              string(data[:]),
+		Body:              "<p>" + body.Name + "</p>",
 		IsBase64Encoded:   false,
 	}, nil
 }
