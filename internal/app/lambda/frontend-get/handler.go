@@ -10,7 +10,7 @@ import (
 const html = `
 <html>
 	<h1>Hello World</h1>
-	<button hx-get=https://3n8x6mzmjl.execute-api.eu-west-1.amazonaws.com/staging/constantin>Test!</button>
+	<button hx-get=/staging/enhance?name=constantin>Test!</button>
 </html>
 <script src="https://unpkg.com/htmx.org@1.9.5" integrity="sha384-xcuj3WpfgjlKF+FXhSQFQ0ZNr39ln+hwjN3npfM9VBnUskLolQAcN80McRIVOPuO" crossorigin="anonymous"></script>
 `
