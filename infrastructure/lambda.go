@@ -7,6 +7,7 @@ import (
 	"github.com/aws/jsii-runtime-go"
 	"os"
 	"strings"
+	"time"
 )
 
 func getLambdas(stack constructs.Construct, stage string) []*apiFunctionResource {
@@ -68,5 +69,5 @@ func buildLambdaVersion(stack constructs.Construct, function awslambda.IFunction
 		Lambda:        function,
 	}
 
-	return awslambda.NewVersion(stack, s(name+"-version"), props)
+	return awslambda.NewVersion(stack, s(name+"-version-"+time.Now().String()), props)
 }
