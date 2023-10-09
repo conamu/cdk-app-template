@@ -13,7 +13,7 @@ build:
     - apt update
     - apt install zip -y
   script:
-    - arch=amd64 ./scripts/build.sh
+    - arch=arm64 ./scripts/build.sh
   artifacts:
     expire_in: 1 week
     paths:
@@ -32,7 +32,7 @@ build-prod:
     - apt update
     - apt install zip -y
   script:
-    - ./scripts/build.sh
+    - arch=arm64 ./scripts/build.sh
   artifacts:
     expire_in: 1 week
     paths:
