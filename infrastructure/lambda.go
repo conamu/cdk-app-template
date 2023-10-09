@@ -19,7 +19,7 @@ func getLambdas(stack constructs.Construct, stage string) []*apiFunctionResource
 	var apiMeta []*apiFunctionResource
 
 	for _, dir := range dirs {
-		dataStrings := strings.Split(dir.Name(), "-")
+		dataStrings := strings.Split(dir.Name(), "_")
 
 		name := dataStrings[0]
 		method := ""
