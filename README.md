@@ -1,5 +1,7 @@
 !! NOTE !!: Localstack integration will be removed in favor of faster development capability :)
 
+This repository on GitHub is merely a mirror of my GitLab instance, so PRs will not be checked regularly.
+
 # Welcome to the template for all things serverless!
 This cdk-app template for golang serverless applications on aws is built for fast iteration and fast time to market
 
