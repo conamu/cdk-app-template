@@ -2,6 +2,9 @@
 
 This repository on GitHub is merely a mirror of my GitLab instance, so PRs will not be checked regularly.
 
+## Todo:
+- Lambdas have their own constructs, underlying infra has its own stack. This will contribute to faster deployments
+
 # Welcome to the template for all things serverless!
 This cdk-app template for golang serverless applications on aws is built for fast iteration and fast time to market
 
